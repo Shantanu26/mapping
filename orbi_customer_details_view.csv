@@ -1,0 +1,11 @@
+lan_id,cust_id,account_no,customer_name,phone_no,email_id,address_line1,address_line2,address_line3,city,state,pincode,dob,gender,pan_no,edl_created_by,op,cdc_timestamp,cdc_row_number,edl_created_at
+7.00007E+13,7000066,,IndusInd Bank Limited,9841028462,,"86, Chamiers Road, Chennai",.,,CHENNAI,TAMIL NADU,600018,,NULL,,edl_spark,,,,1.69351E+12
+7.00007E+13,7000066,,IndusInd Bank Limited,9841028462,,"86, Chamiers Road, Chennai",.,,CHENNAI,TAMIL NADU,600018,,NULL,,edl_spark,,,,1.69351E+12
+7.00012E+13,7000117,,Radico Khaitan Limited,11,,Mohan Cooperative Industrial A,.,Mathura Road,DELHI,DELHI,110044,,NULL,,edl_spark,,,,1.69351E+12
+7.00028E+13,7000283,,Spencers Travel Services Ltd.,4428523611,,"769 , Spencer Plaza",Anna Salai,,Chennai,Tamil Nadu,600002,,NULL,,edl_spark,,,,1.69351E+12
+7.00064E+13,7000640,,Hero Motors Limited,1126216666,,"601, International Trade Tower",.,,DELHI,DELHI,110019,,NULL,,edl_spark,,,,1.69351E+12
+7.00064E+13,7000640,,Hero Motors Limited,1126216666,,"601, International Trade Tower",.,,DELHI,DELHI,110019,,NULL,,edl_spark,,,,1.69351E+12
+7.00076E+13,7000763,,Hatsun Agro Products Limited,044-28150014,,"5-A, Vijayaraghava Road",T Nagar,,CHENNAI,TAMIL NADU,600017,,NULL,,edl_spark,,,,1.69351E+12
+7.00076E+13,7000763,,Hatsun Agro Products Limited,044-28150014,,"5-A, Vijayaraghava Road",T Nagar,,CHENNAI,TAMIL NADU,600017,,NULL,,edl_spark,,,,1.69351E+12
+7.00082E+13,7000817,,Bajaj Motors Limited,1242371453,,39 40 KM Stone,Delhi Jaipur Highway,,GURGAON,HARYANA,122001,,NULL,,edl_spark,,,,1.69351E+12
+7.00082E+13,7000817,,Bajaj Motors Limited,1242371453,,39 40 KM Stone,Delhi Jaipur Highway,,GURGAON,HARYANA,122001,,NULL,,edl_spark,,,,1.69351E+12
