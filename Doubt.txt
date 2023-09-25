@@ -1,157 +1,19 @@
---select * from plf_presentmentdetails where finreference='SBLBUSI000022829';
---select * from plfhl_plf_mandate_requests limit 10;
---select * from plf_finscheduledetails where finreference='MVGURPL4000049151';
---select count(schpripaid) from plf_finscheduledetails where schpripaid= '1' and finreference='SBLBUSI000022829';
---select max(instnumber) from plf_finscheduledetails where finreference='MVGURPL4000049151';
-
-select distinct * from (
-select main.finreference LoanAccountNumber2
-, main.applicationno ApplicationNumber2
-, main.custid CustomerID1
-, cust.custcrcpr PAN1
-, ucic.cuid UCIC
-, cust.custshrtname Cust_Name
-, date_format(CAST(date_parse(main.finstartdate, '%Y-%m-%d %H:%i:%s.%f') AS date), '%Y-%m-%d') Onboarding_Date
-, cust.emailid EmailId1
-, date_format(CAST(date_parse(cust.custdob, '%Y-%m-%d %H:%i:%s.%f') AS date), '%Y-%m-%d') DateOfBirth
-, add.custaddrhnbr House_Num
-, add.custflatnbr Flat_Num
-, add.custaddrstreet Street
-, add.custaddrline1 AddressLine1
-, add.custaddrline2 AddressLine2
-, add.custaddrline3 AddressLine3
-, add.custaddrline4 AddressLine4
-, add.custaddrzip ZipCode1
-, city.pccityname City1
-, state.cpprovincename State1
-, disb.disb_amt Total_Disb_Amount
-, main.numberofterms Tenor2
-,pmr.mandateid E_MandateId
-,pmr.bank_name BankName1
-,pmr.acct_number BankAccountNumber1
-,pmr.acct_type Account_Type
-,pmr.acct_holder_name Account_Holder_Name
-,date_format(CAST(date_parse(pmr.start_date, '%Y-%m-%d %H:%i:%s.%f') AS date), '%Y-%m-%d') LoanStartDate2
-,date_format(CAST(date_parse(pmr.emi_enddate, '%Y-%m-%d %H:%i:%s.%f') AS date), '%Y-%m-%d') LoanEndDate2
-,pmr.mandate_type Mandate_Type
-,pmr.status AccountStatus2
-,pmr.ifsc_code Ifsc_Code
-,pfd.PaidEmi TotalEMIPaid
-,pfd.TotalInterestPaid TotalInterestPaid
-,pfd.TAP Total_Amount_Paid
-,pce.custemailtypecode EmailType
-,pce.custemailpriority Prioirty
-,pcp.phonetypecode phoneType
-,pcp.phonenumber MobileNumber1
-,pfd.prin TotalPrinPaid
-,prb.branchcode BranchCode2 
-,pfd.NoOfEmi noOfEmi
-,paf.appliedloanamt LoanAmount2
-
-
-from
-plf_financemain main
-left join plf_customers cust
-on cust.custid = main.custid
-left join (select distinct * from "clix_ucic_mapping"."ucic") ucic
-on ucic.pan = cust.custcrcpr
-left join (select * from plf_customeraddresses where custaddrtype = 'PER') add
-on add.custid = main.custid
-left join plf_rmtprovincevscity city
-on city.pccity = add.custaddrcity
-left join plf_rmtcountryvsprovince state
-on state.cpprovince = add.custaddrprovince
-left join (select finreference,sum(cast(disbursement_amount as decimal)) disb_amt from plf_disbursement_requests group by 1) disb
-on disb.finreference = main.finreference
-left join plf_mandate_requests pmr
-on pmr.finreference = main.finreference
-left join (select finreference,(select count(schpripaid) from plf_finscheduledetails where schpripaid= '1') PaidEmi,(select max(instnumber) from plf_finscheduledetails) NoOfEmi,sum(cast(schdpripaid as decimal))/100 prin,sum(cast(schdpripaid as decimal) + (cast(schdpftpaid as decimal))) /100 TAP,sum(cast(schdpftpaid as decimal)) /100 TotalInterestPaid  from plf_finscheduledetails group by 1,2) pfd
-on pfd.finreference = main.finreference
-left join (select finreference,count(cast(emino as decimal)) te from plf_presentmentdetails group by 1) ppd
-on ppd.finreference = main.finreference
-left join plf_customeremails pce
-on main.custid = pce.custid
-left join plf_CustomerPhonenumbers pcp
-on cust.custid = pcp.phonecustid
-left join plf_rmtbranches prb
-on main.finbranch = prb.branchcode 
-left join plfaudit_adtfinancemain paf
-on main.finreference = paf.finreference
-
+select distinct * from(
+select * from(
+select finreference lan,custid from "lumiq_edl_prod_platinum_tables"."plf_financemain" plfmain
 union all
+select finreference lan,custid from "lumiq_edl_prod_platinum_tables"."plfhl_plf_financemain" plfhlmain
+union all
+select concat(mpi_cust_id,mpi_con_id,mpi_proj_id) lan,mpi_cust_id custid from "lumiq_edl_prod_platinum_tables"."orbi_m_proj_info" ompi
+union all
+select tranche_no lan,cust_id custid from "lumiq_edl_prod_platinum_tables"."infolease_india_nea" iin
+union all
+select distinct cast(cif as varchar) custid, loan_application_id lan from epik_mv_application_data.mv_applicant_case_info maci
+where loan_application_id not in (select finreference from plf_financemain) 
 
-select main.finreference LoanAccountNumber2
-, main.applicationno ApplicationNumber2
-, main.custid CustomerID1
-, cust.custcrcpr PAN1
-, ucic.cuid UCIC
-, cust.custshrtname Cust_Name
-, date_format(CAST(date_parse(main.finstartdate, '%Y-%m-%d %H:%i:%s.%f') AS date), '%Y-%m-%d') Onboarding_Date
-, cust.emailid EmailId1
-, date_format(CAST(date_parse(cust.custdob, '%Y-%m-%d %H:%i:%s.%f') AS date), '%Y-%m-%d') DateOfBirth
-, add.custaddrhnbr House_Num
-, add.custflatnbr Flat_Num
-, add.custaddrstreet Street
-, add.custaddrline1 AddressLine1
-, add.custaddrline2 AddressLine2
-, add.custaddrline3 AddressLine3
-, add.custaddrline4 AddressLine4
-, add.custaddrzip ZipCode1
-, city.pccityname City1
-, state.cpprovincename State1
-, disb.disb_amt Total_Disb_Amount
-, main.numberofterms Tenor2
-,pmr.mandateid E_MandateId
-,pmr.bank_name BankName1
-,pmr.acct_number BankAccountNumber1
-,pmr.acct_type Account_Type
-,pmr.acct_holder_name Account_Holder_Name
-,date_format(CAST(date_parse(pmr.start_date, '%Y-%m-%d %H:%i:%s.%f') AS date), '%Y-%m-%d') LoanStartDate2
-,date_format(CAST(date_parse(pmr.emi_enddate, '%Y-%m-%d %H:%i:%s.%f') AS date), '%Y-%m-%d') LoanEndDate2
-,pmr.mandate_type Mandate_Type
-,pmr.status AccountStatus2
-,pmr.ifsc_code Ifsc_Code
-,pfd.PaidEmi TotalEMIPaid
-,pfd.TotalInterestPaid TotalInterestPaid
-,pfd.TAP Total_Amount_Paid
-,pce.custemailtypecode EmailType
-,pce.custemailpriority Prioirty
-,pcp.phonetypecode phoneType
-,pcp.phonenumber MobileNumber1
-,pfd.prin TotalPrinPaid
-,prb.branchcode BranchCode2 
-,pfd.NoOfEmi noOfEmi
-,paf.appliedloanamt LoanAmount2
+) tbl1 
 
-from 
+left join cibil c
+on tbl1.lan=c.lan
 
-plfhl_plf_financemain main
-left join plfhl_plf_customers cust
-on cust.custid = main.custid
-left join (select distinct * from "clix_ucic_mapping"."ucic") ucic
-on ucic.pan = cust.custcrcpr
-left join (select * from plfhl_plf_customeraddresses where custaddrtype = 'PER') add
-on add.custid = main.custid
-left join plfhl_plf_rmtprovincevscity city
-on city.pccity = add.custaddrcity
-left join plfhl_plf_rmtcountryvsprovince state
-on state.cpprovince = add.custaddrprovince
-left join (select finreference,sum(cast(disbursement_amount as decimal)) disb_amt from plfhl_plf_disbursement_requests group by 1) disb
-on disb.finreference = main.finreference
-left join plfhl_plf_mandate_requests pmr
-on pmr.finreference = main.finreference
-left join (select finreference,(select count(schpripaid) from plf_finscheduledetails where schpripaid= '1') PaidEmi,(select max(instnumber) from plf_finscheduledetails) NoOfEmi,sum(cast(schdpripaid as decimal))/100 prin,sum(cast(schdpripaid as decimal) + (cast(schdpftpaid as decimal))) /100 TAP,sum(cast(schdpftpaid as decimal)) /100 TotalInterestPaid from plfhl_plf_finscheduledetails group by 1,2) pfd
-on pfd.finreference = main.finreference
-left join (select finreference,count(cast(emino as decimal)) te from plfhl_plf_presentmentdetails group by 1) ppd
-on ppd.finreference = main.finreference
-left join plf_customeremails pce
-on main.custid = pce.custid
-left join plf_CustomerPhonenumbers pcp
-on cust.custid = pcp.phonecustid
-left join plf_rmtbranches prb
-on main.finbranch = prb.branchcode 
-left join plfaudit_adtfinancemain paf
-on main.finreference = paf.finreference
-
-)
- where LoanAccountNumber2= 'MVGURPL4000049151' or CustomerID1 = '58974' or PAN1 = ''
+) group by custid
